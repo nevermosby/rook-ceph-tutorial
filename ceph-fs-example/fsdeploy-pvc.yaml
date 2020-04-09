@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: n4-cephfs
+    pv: cephfs
+  name: n4-cephfs
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: n4-cephfs
+      pv: cephfs
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: n4-cephfs
+        pv: cephfs
+    spec:
+      volumes:
+        - name: fsceph-pv-storage
+          persistentVolumeClaim:
+            claimName: cephfs-pvc
+      containers:
+      - image: nginx
+        name: nginx
+        ports:
+          - containerPort: 80
+            name: "http-server"
+        volumeMounts:
+          - mountPath: "/usr/share/nginx/html"
+            name: fsceph-pv-storage
